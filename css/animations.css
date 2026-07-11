@@ -1,0 +1,726 @@
+/* ============================================
+   ANIMATIONS — SPRING PHYSICS + DEPTH
+   ============================================ */
+
+/* Spring curves */
+:root {
+  --spring-enter: cubic-bezier(0.17, 0.67, 0.21, 1.2);
+  --spring-exit: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-card: cubic-bezier(0.17, 0.67, 0.21, 1.15);
+}
+
+/* ============================================
+   BASE ANIMATIONS
+   ============================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeBlur {
+  from { opacity: 0; filter: blur(8px); transform: translateY(12px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
+
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(40px); filter: blur(6px); }
+  to { opacity: 1; transform: translateX(0); filter: blur(0); }
+}
+
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-30px); filter: blur(4px); }
+  to { opacity: 1; transform: translateX(0); filter: blur(0); }
+}
+
+@keyframes scaleSpring {
+  0% { transform: scale(0.7); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  85% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  80% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wipeReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes strokeExpand {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* ============================================
+   IDLE ANIMATIONS — VIDA
+   ============================================ */
+@keyframes breatheGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(34, 197, 94, 0); }
+  50% { text-shadow: 0 0 40px rgba(34, 197, 94, 0.15); }
+}
+
+@keyframes breatheShadow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(34, 197, 94, 0.05); }
+  50% { box-shadow: 0 4px 30px rgba(34, 197, 94, 0.12); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(1deg); }
+  66% { transform: translateY(4px) rotate(-0.5deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes travelGlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+  50% { box-shadow: 0 0 40px var(--accent-glow); }
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes rotateGradient {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes driftNoise {
+  from { background-position: 0 0; }
+  to { background-position: 256px 256px; }
+}
+
+@keyframes driftGradient {
+  0%, 100% { background-position: 15% 20%, 85% 80%; }
+  50% { background-position: 18% 23%, 82% 77%; }
+}
+
+@keyframes particleFloat {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translate(var(--px), var(--py)); opacity: 0; }
+}
+
+@keyframes dotOrbit {
+  from { transform: rotate(0deg) translateX(20px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  10% { transform: scale(1.05); }
+  20% { transform: scale(1); }
+  30% { transform: scale(1.03); }
+  40% { transform: scale(1); }
+}
+
+@keyframes eyeBlink {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+/* ============================================
+   CARD 3D — FLIP CINEMÁTICO
+   ============================================ */
+@keyframes cardLevitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes borderGlowTravel {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cardFlipPhase1 {
+  0% { transform: rotateY(0deg) scale(1); }
+  100% { transform: rotateY(90deg) scale(1.08); }
+}
+
+@keyframes cardFlipPhase2 {
+  0% { transform: rotateY(90deg) scale(1.08); }
+  70% { transform: rotateY(180deg) scale(1.02); }
+  85% { transform: rotateY(178deg) scale(1); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+@keyframes cardFlipSquash {
+  0% { transform: scaleX(1) scaleY(1); }
+  50% { transform: scaleX(1.02) scaleY(0.98); }
+  100% { transform: scaleX(1) scaleY(1); }
+}
+
+@keyframes glitchText {
+  0%, 100% { transform: translate(0); }
+  10% { transform: translate(-3px, 2px); }
+  20% { transform: translate(3px, -1px); }
+  30% { transform: translate(-2px, -3px); }
+  40% { transform: translate(2px, 3px); }
+  50% { transform: translate(-1px, -2px); }
+  60% { transform: translate(3px, 1px); }
+  70% { transform: translate(-3px, -1px); }
+  80% { transform: translate(1px, 3px); }
+  90% { transform: translate(-2px, 2px); }
+}
+
+@keyframes impostorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+@keyframes impostorPulse {
+  0%, 100% { box-shadow: 0 0 30px var(--accent-glow); }
+  50% { box-shadow: 0 0 60px var(--accent-glow); }
+}
+
+/* ============================================
+   COUNTDOWN — EXPERIENCIA DRAMÁTICA
+   ============================================ */
+@keyframes countdownNumber {
+  0% { transform: scale(0.1); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes countdownShockwave {
+  0% { transform: scale(0.3); opacity: 0.4; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes countdownDisappear {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+@keyframes countdownSweep {
+  0% { transform: translateX(-100%); opacity: 0; }
+  50% { opacity: 0.15; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes countdownExplosion {
+  0% { transform: scale(0.5) rotate(0deg); opacity: 0; }
+  50% { transform: scale(1.8) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes fragmentFly {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+  100% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) scale(0); opacity: 0; }
+}
+
+/* ============================================
+   RESULT REVEAL
+   ============================================ */
+@keyframes particlesConverge {
+  0% { transform: translate(var(--px), var(--py)); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translate(0, 0); opacity: 1; }
+}
+
+@keyframes resultGlitch {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes vignetteDarken {
+  from { box-shadow: inset 0 0 100px rgba(0, 0, 0, 0); }
+  to { box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.4); }
+}
+
+@keyframes cardStrokeReveal {
+  from { stroke-dashoffset: 1000; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes slotMachine {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes spotlightCone {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================
+   CONFETTI EXPLOSIVO
+   ============================================ */
+@keyframes confettiExplode {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+  30% { opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(0.3); opacity: 0; }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg) scale(0.3); opacity: 0; }
+}
+
+/* ============================================
+   RIPPLE EFFECT
+   ============================================ */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  animation: rippleExpand 0.6s var(--spring-exit) forwards;
+}
+
+@keyframes rippleExpand {
+  from { width: 0; height: 0; opacity: 0.15; }
+  to { width: 200px; height: 200px; opacity: 0; margin-top: -100px; margin-left: -100px; }
+}
+
+/* ============================================
+   STAGGER CLASSES
+   ============================================ */
+.stagger-1 { animation: fadeBlur 0.5s var(--spring-enter) 0.05s both; }
+.stagger-2 { animation: fadeBlur 0.5s var(--spring-enter) 0.1s both; }
+.stagger-3 { animation: fadeBlur 0.5s var(--spring-enter) 0.15s both; }
+.stagger-4 { animation: fadeBlur 0.5s var(--spring-enter) 0.2s both; }
+.stagger-5 { animation: fadeBlur 0.5s var(--spring-enter) 0.25s both; }
+
+/* ============================================
+   ANIMATION CLASSES
+   ============================================ */
+.animate-pulse { animation: pulseGlow 2.5s ease-in-out infinite; }
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-breathe { animation: breatheGlow 3s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out;
+}
+
+.glitch-effect { animation: glitchText 0.4s ease-in-out; }
+.impostor-shake { animation: impostorShake 0.4s ease-in-out; }
+.impostor-pulse { animation: impostorPulse 0.5s ease-in-out 2; }
+
+/* ============================================
+   BUTTON MICRO-INTERACTIONS
+   ============================================ */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.1s var(--spring-enter), box-shadow 0.3s ease;
+}
+
+.btn:active {
+  transform: scale(0.96) !important;
+  transition: transform 0.08s ease;
+}
+
+/* ============================================
+   SCREEN TRANSITIONS
+   ============================================ */
+.screen {
+  transition: opacity 0.4s var(--spring-exit), transform 0.4s var(--spring-exit), filter 0.4s ease;
+}
+
+.screen.active {
+  animation: none;
+}
+
+/* ============================================
+   CARD IDLE EFFECTS
+   ============================================ */
+.card-3d-container {
+  animation: float 4s ease-in-out infinite;
+}
+
+.card-3d-container::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radius-lg);
+  background: conic-gradient(from 0deg, transparent 0%, var(--accent) 10%, transparent 20%);
+  opacity: 0.3;
+  animation: rotateGradient 6s linear infinite;
+  z-index: -1;
+  filter: blur(4px);
+}
+
+/* ============================================
+   TIMER MICRO-ANIMATIONS
+   ============================================ */
+.timer-container {
+  animation: breatheShadow 3s ease-in-out infinite;
+}
+
+.timer-ring-fill {
+  transition: stroke-dashoffset 1s linear, stroke 2s ease;
+}
+
+/* ============================================
+   PARTICLE SYSTEM
+   ============================================ */
+.bg-particle {
+  position: fixed;
+  width: var(--size, 3px);
+  height: var(--size, 3px);
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: particleFloat var(--duration, 10s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* ============================================
+   HOME SPECIFIC
+   ============================================ */
+.home-title {
+  animation: breatheGlow 3s ease-in-out infinite;
+}
+
+.home-divider {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: travelGlow 4s ease-in-out infinite;
+}
+
+/* ============================================
+   SETUP MICRO-ANIMATIONS
+   ============================================ */
+.player-count-btn {
+  transition: transform 0.2s var(--spring-bounce), border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.player-count-btn.selected {
+  animation: popIn 0.4s var(--spring-bounce);
+}
+
+.category-btn {
+  transition: transform 0.2s var(--spring-bounce), border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-btn.selected .cat-count {
+  animation: pulseGlow 0.3s ease-out;
+}
+
+.mode-option {
+  transition: transform 0.2s var(--spring-bounce), border-color 0.3s ease, background 0.3s ease;
+}
+
+.mode-option.selected .mode-radio::after {
+  animation: popIn 0.3s var(--spring-bounce);
+}
+
+/* ============================================
+   REVEAL ANIMATIONS
+   ============================================ */
+.reveal-instruction {
+  animation: fadeBlur 0.5s var(--spring-enter) 0.3s both;
+}
+
+.reveal-warning {
+  animation: fadeBlur 0.5s var(--spring-enter) 0.4s both;
+}
+
+/* ============================================
+   SELECT SCREEN
+   ============================================ */
+.player-select-card {
+  transition: transform 0.2s var(--spring-bounce), border-color 0.3s ease, background 0.3s ease, opacity 0.3s ease;
+}
+
+/* ============================================
+   RESULT ANIMATIONS
+   ============================================ */
+.result-status {
+  animation: scaleSpring 0.6s var(--spring-bounce);
+}
+
+.result-card {
+  animation: fadeUp 0.5s var(--spring-enter);
+}
+
+/* ============================================
+   CONTENT MANAGER
+   ============================================ */
+.word-item {
+  transition: transform 0.2s var(--spring-bounce), opacity 0.3s ease, background 0.3s ease;
+}
+
+.word-item:hover {
+  transform: translateX(4px);
+}
+
+.add-word-input:focus {
+  animation: breatheShadow 2s ease-in-out infinite;
+}
+
+/* ============================================
+   DEBUG PANEL
+   ============================================ */
+#debug-panel {
+  transition: right 0.3s var(--spring-enter);
+}
+
+/* ============================================
+   TOAST
+   ============================================ */
+#toast {
+  transition: all 0.3s var(--spring-enter);
+}
+
+#toast.visible {
+  animation: popIn 0.4s var(--spring-bounce);
+}
+
+/* ============================================
+   CURSOR BLINK
+   ============================================ */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ============================================
+   REVEAL ANIMATIONS
+   ============================================ */
+.reveal-player-name-type {
+  min-height: 48px;
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-10deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) rotate(2deg);
+  }
+  80% {
+    transform: scale(0.98) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.card-3d-container.entering {
+  animation: cardEntrance 0.7s cubic-bezier(0.17, 0.67, 0.21, 1.27) forwards;
+}
+
+@keyframes cardLevitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.card-3d-container.idle {
+  animation: cardLevitate 3s ease-in-out infinite;
+}
+
+/* ============================================
+   COUNTDOWN — DRAMÁTICO
+   ============================================ */
+.countdown-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 120px;
+  font-weight: 400;
+  color: var(--accent);
+  text-shadow:
+    0 0 40px var(--accent-glow),
+    0 0 80px var(--accent-glow);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+@keyframes countdown-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(0.95);
+  }
+  80% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes countdown-ring {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.4;
+    border-width: 3px;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+/* ============================================
+   RESULT — ENTRADA ESCALONADA
+   ============================================ */
+@keyframes resultFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.result-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 8vw, 40px);
+  letter-spacing: 0.04em;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.result-title-win { color: var(--success); }
+.result-title-lose { color: var(--accent); }
+
+.result-card {
+  width: 100%;
+  max-width: 300px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.result-card.caught {
+  border: 2px solid var(--success);
+  background: rgba(16, 185, 129, 0.05);
+  box-shadow: 0 0 30px var(--success-glow);
+}
+
+.result-card.innocent {
+  border: 2px solid var(--accent);
+  background: rgba(34, 197, 94, 0.05);
+  box-shadow: 0 0 30px var(--accent-glow);
+}
+
+.result-card.tie-result {
+  border: 2px solid var(--gold);
+  background: rgba(245, 158, 11, 0.05);
+  box-shadow: 0 0 30px var(--gold-glow);
+}
+
+.result-player-name {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.result-role {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.result-word-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.result-word {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+
+.result-impostor-reveal {
+  text-align: center;
+  margin: 16px 0;
+}
+
+.result-impostor-name {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.result-round-info {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ============================================
+   ATMÓSFERA — MOMENTOS DRAMÁTICOS
+   ============================================ */
+body.atmosphere-countdown::before {
+  opacity: 0.8 !important;
+}
+
+body.atmosphere-victory::before {
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%) !important;
+}
+
+body.atmosphere-defeat::before {
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(34, 197, 94, 0.05) 0%, transparent 50%) !important;
+}
