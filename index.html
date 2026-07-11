@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#080c08">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>El Impostor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/debug.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ========== HOME ========== -->
+    <div id="screen-home" class="screen active">
+      <h1 class="title-huge home-title stagger-1">EL<br>IMPOSTOR</h1>
+      <div class="home-divider stagger-2"></div>
+      <p class="subtitle stagger-3">¿Quién miente?</p>
+      <div class="home-menu">
+        <button class="btn btn-primary btn-block btn-lg animate-pulse stagger-4" onclick="showScreen('setup')">JUGAR</button>
+        <button class="btn btn-ghost btn-block stagger-5" onclick="showNightStats()">📊 NOCHE</button>
+        <button class="btn btn-ghost btn-block stagger-5" onclick="showScreen('tutorial')">CÓMO JUGAR</button>
+        <button class="btn btn-ghost btn-block stagger-5" onclick="showScreen('content')">CONTENIDO</button>
+      </div>
+      <p class="home-version">v2.0 · 1 celular · mucha traición</p>
+    </div>
+
+    <!-- ========== SETUP ========== -->
+    <div id="screen-setup" class="screen">
+      <div class="setup-header">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">←</button>
+        <h2 class="title-lg">JUGAR</h2>
+      </div>
+
+      <div class="setup-main" id="setup-accordion"></div>
+
+      <button class="btn btn-primary btn-block btn-lg" id="setup-start-btn" style="margin-top:auto" onclick="startGame()" disabled>
+        ELEGÍ UNA CATEGORÍA
+      </button>
+    </div>
+
+    <!-- ========== REVEAL (Pass & Play) ========== -->
+    <div id="screen-reveal" class="screen no-scroll">
+      <div id="reveal-passplay" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;">
+        <p class="label">Pasale el celular a</p>
+        <h2 class="title-lg text-gold" id="reveal-player-name">JUGADOR 1</h2>
+        <p class="subtitle" style="font-size:14px;">Tocá para ver tu carta</p>
+        <div class="card-3d-container" id="reveal-card-waiting" onclick="flipCardReveal()">
+          <div class="card-3d-inner" id="card-inner">
+            <div class="card-face card-face-back">
+              <div class="card-back-pattern"></div>
+              <div class="card-back-icon">🎭</div>
+              <div class="card-back-text">EL IMPOSTOR</div>
+            </div>
+            <div class="card-face card-face-front" id="card-front">
+              <span class="card-role-label" id="card-role-label">Tu palabra</span>
+              <span class="card-word" id="card-word-text"></span>
+              <span class="card-hint" id="card-hint-text"></span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="btn-hide-card" style="display:none;opacity:0" onclick="hideCardAndNext()">👁️ OCULTAR Y PASAR</button>
+        <p class="reveal-warning" id="reveal-warning" style="display:none">⚠️ ¡Que nadie más vea!</p>
+        <p class="reveal-instruction" id="reveal-instruction">Tocá la carta para ver tu rol</p>
+      </div>
+
+      <div id="reveal-simultaneous" style="display:none;flex-direction:column;align-items:center;gap:16px;width:100%;">
+        <p class="label">TODOS MIRAN EL CELULAR</p>
+        <p class="subtitle" style="font-size:14px;">Tocá tu nombre para ver tu carta</p>
+        <p class="timer-digits" id="simultaneous-timer">5</p>
+        <div class="simultaneous-grid" id="simultaneous-grid"></div>
+      </div>
+    </div>
+
+    <!-- ========== DISCUSSION ========== -->
+    <div id="screen-discussion" class="screen">
+      <p class="label">RONDA <span id="disc-round">1</span>/<span id="disc-total-rounds">3</span></p>
+      <div class="timer-display" id="timer-display">
+        <div class="flip-digit" id="timer-m1">
+          <div class="flip-digit-inner">0</div>
+        </div>
+        <div class="flip-digit" id="timer-m2">
+          <div class="flip-digit-inner">2</div>
+        </div>
+        <div class="timer-colon">:</div>
+        <div class="flip-digit" id="timer-s1">
+          <div class="flip-digit-inner">0</div>
+        </div>
+        <div class="flip-digit" id="timer-s2">
+          <div class="flip-digit-inner">0</div>
+        </div>
+      </div>
+      <div class="timer-bar">
+        <div class="timer-bar-fill" id="timer-bar-fill"></div>
+      </div>
+      <p class="timer-label">DISCUSIÓN</p>
+      <div class="discussion-info">
+        <p class="discussion-category" id="disc-category">Categoría</p>
+        <p class="discussion-hint">"Decí una palabra relacionada con el tema en tu turno"</p>
+      </div>
+      <button class="btn btn-gold btn-block" onclick="endDiscussion()">FINALIZAR DISCUSIÓN</button>
+    </div>
+
+    <!-- ========== SELECT ELIMINATED ========== -->
+    <div id="screen-select" class="screen">
+      <h2 class="title-md" style="margin-bottom:4px;">¿A QUIÉN ELIMINAN?</h2>
+      <p class="subtitle" style="font-size:14px;margin-bottom:20px;">Votaron en grupo. Tocá al elegido.</p>
+      <div class="player-select-grid" id="player-select-grid"></div>
+      <button class="btn btn-ghost btn-block btn-tie" onclick="handleTie()">🤝 EMPATE / NADIE</button>
+    </div>
+
+    <!-- ========== RESULT ========== -->
+    <div id="screen-result" class="screen">
+      <div id="result-content"></div>
+    </div>
+
+    <!-- ========== GAMEOVER ========== -->
+    <div id="screen-gameover" class="screen">
+      <h2 class="title-lg text-gold" style="margin-bottom:4px;">GAME OVER</h2>
+      <p class="subtitle" style="font-size:14px;margin-bottom:4px;" id="gameover-winner">Resultados finales</p>
+      <div class="podium" id="podium"></div>
+      <div class="gameover-stats" id="gameover-stats"></div>
+      <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;margin-top:16px;">
+        <button class="btn btn-primary btn-block" onclick="showScreen('setup')">NUEVA PARTIDA</button>
+        <button class="btn btn-ghost btn-block" onclick="showScreen('home')">INICIO</button>
+      </div>
+    </div>
+
+    <!-- ========== TUTORIAL ========== -->
+    <div id="screen-tutorial" class="screen" style="justify-content:flex-start;padding-top:max(32px,env(safe-area-inset-top));">
+      <div class="setup-header">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">←</button>
+        <h2 class="title-lg">CÓMO JUGAR</h2>
+      </div>
+      <div class="tutorial-steps">
+        <div class="tutorial-step stagger-1">
+          <span class="tutorial-num">1</span>
+          <div>
+            <h4>PASA EL CELULAR</h4>
+            <p>Cada jugador ve su carta en secreto. La mayoría recibe la misma palabra. Uno o más reciben... "IMPOSTOR".</p>
+          </div>
+        </div>
+        <div class="tutorial-step stagger-2">
+          <span class="tutorial-num">2</span>
+          <div>
+            <h4>DISCUTAN</h4>
+            <p>El celular queda en el centro con el timer. Cada uno dice una palabra relacionada al tema. El impostor tiene que disimular sin saber la palabra.</p>
+          </div>
+        </div>
+        <div class="tutorial-step stagger-3">
+          <span class="tutorial-num">3</span>
+          <div>
+            <h4>VOTEN</h4>
+            <p>Voten entre ustedes (en persona, no en el celular). El grupo decide a quién eliminar.</p>
+          </div>
+        </div>
+        <div class="tutorial-step stagger-4">
+          <span class="tutorial-num">4</span>
+          <div>
+            <h4>LA VERDAD</h4>
+            <p>Tomen el celular, seleccionen al eliminado y descubran si era el impostor o un inocente. ¿Lo encontraron o se salvó?</p>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-block" style="margin-top:16px" onclick="showScreen('home')">VOLVER</button>
+    </div>
+
+    <!-- ========== CONTENT MANAGER ========== -->
+    <div id="screen-content" class="screen" style="justify-content:flex-start;padding-top:max(24px,env(safe-area-inset-top));">
+      <div class="content-header">
+        <button class="btn btn-ghost btn-sm" onclick="contentBack()">←</button>
+        <h2 class="title-lg">CONTENIDO</h2>
+      </div>
+      <div id="content-body" style="width:100%;flex:1;overflow-y:auto;min-height:0;"></div>
+    </div>
+
+    <!-- ========== LIGHTNING ROUND ========== -->
+    <div id="screen-lightning" class="screen no-scroll">
+      <div id="lightning-content"></div>
+    </div>
+
+    <!-- ========== SILENCE ROUND ========== -->
+    <div id="screen-silence" class="screen no-scroll">
+      <div id="silence-content"></div>
+    </div>
+
+    <!-- ========== NIGHT STATS ========== -->
+    <div id="screen-nightstats" class="screen" style="justify-content:flex-start;padding-top:max(24px,env(safe-area-inset-top));">
+      <div class="content-header">
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">←</button>
+        <h2 class="title-lg">📊 NOCHE</h2>
+      </div>
+      <div id="nightstats-body" style="width:100%;flex:1;overflow-y:auto;min-height:0;"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAYS -->
+  <div id="transition-overlay"></div>
+  <div id="confetti-container"></div>
+  <div id="toast"></div>
+  <div id="debug-indicator"></div>
+  <div id="simultaneous-modal" class="simultaneous-modal"></div>
+
+  <!-- OPCIONES AVANZADAS MODAL -->
+  <div id="advanced-modal" class="advanced-modal">
+    <div class="advanced-header">
+      <button class="btn btn-ghost btn-sm" onclick="closeAdvancedOptions()">←</button>
+      <h2 class="title-lg">OPCIONES</h2>
+    </div>
+    <div class="advanced-body" id="advanced-body"></div>
+  </div>
+
+  <!-- DEBUG PANEL -->
+  <div id="debug-panel">
+    <div class="debug-title">
+      DEBUG
+      <button class="debug-close" onclick="toggleDebug()">✕</button>
+    </div>
+
+    <div class="debug-section">
+      <div class="debug-section-title">NAVEGACIÓN RÁPIDA</div>
+      <div class="debug-nav-grid">
+        <button class="debug-btn" onclick="debugGoto('home')">Home</button>
+        <button class="debug-btn" onclick="debugGoto('setup')">Setup</button>
+        <button class="debug-btn" onclick="debugGoto('reveal')">Reveal</button>
+        <button class="debug-btn" onclick="debugGoto('discussion')">Timer</button>
+        <button class="debug-btn" onclick="debugGoto('select')">Select</button>
+        <button class="debug-btn" onclick="debugGoto('result')">Result</button>
+        <button class="debug-btn" onclick="debugGoto('gameover')">Game Over</button>
+        <button class="debug-btn" onclick="debugGoto('content')">Contenido</button>
+      </div>
+    </div>
+
+    <div class="debug-section">
+      <div class="debug-section-title">ESTADO DEL JUEGO</div>
+      <div id="debug-state"></div>
+    </div>
+
+    <div class="debug-section">
+      <div class="debug-section-title">ACCIONES</div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <button class="debug-btn" onclick="debugRevealAll()">👁️ Ver TODAS las cartas</button>
+        <button class="debug-btn" onclick="debugForceResult('caught')">🏆 Forzar: atraparon impostor</button>
+        <button class="debug-btn" onclick="debugForceResult('escaped')">💀 Forzar: impostor se salvó</button>
+        <button class="debug-btn" onclick="debugSkipTimer()">⏩ Saltar timer</button>
+        <button class="debug-btn" onclick="debugAddScoreAll()">⭐ Dar +5 puntos a todos</button>
+        <button class="debug-btn" onclick="debugResetGame()">🔄 Resetear juego</button>
+      </div>
+    </div>
+
+    <div class="debug-section">
+      <div class="debug-section-title">BASE DE DATOS</div>
+      <div id="debug-db-stats"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/config.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/rounds.js"></script>
+  <script src="js/screens.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/gamelogic.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/result.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/debug.js"></script>
+  <script src="js/init.js"></script>
+</body>
+</html>
